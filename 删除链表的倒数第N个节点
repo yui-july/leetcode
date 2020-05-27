@@ -1,0 +1,27 @@
+【错误1：老生常谈，没有属性next，让我康康是哪个小撒币又偷偷空了还要带尾巴】
+【删除倒数第n个节点和返回倒数第n个节点不一样，删除需要找到倒数第n+1个节点】
+class Solution:
+    def removeNthFromEnd(self, head: ListNode, n: int) -> ListNode:
+        tmp = prev = head                  #这里，如果tmp从head开始，那么错误会有两处，首先：
+        for i in range(n):                 #for循环完，tmp就位，然后执行while之后，head会在倒数第n个节点上，就无法删除head
+            tmp = tmp.next
+        while tmp.next:                    #其次：如果要删除头节点，那么for完之后tmp=None，此时tmp.next无意义，没错就是你这个小撒币！
+            head = head.next               #这一遍写完发现错了之后，我居然把while那句改成了while tmp.next is not None:，谁知道我当时怎么想的，其实我才是小撒比
+            tmp = tmp.next
+        head.next = head.next.next
+        return prev
+        
+【所以需要删除的时候，应该构建虚假头节点】
+【answer：】
+class Solution:
+    def removeNthFromEnd(self, head: ListNode, n: int) -> ListNode:
+        prev = ListNode(0)
+        prev.next = head
+        tmp = slow = prev                 #就是这里啦，删除的时候要找到被删点的前一个点才可以
+        for i in range(n):
+            tmp = tmp.next
+        while tmp.next:
+            slow = slow.next
+            tmp = tmp.next
+        slow.next = slow.next.next
+        return prev.next
