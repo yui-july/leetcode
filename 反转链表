@@ -15,3 +15,12 @@ class Solution:
             pre = curr
             curr = a
         return pre
+
+
+【简洁代码，耗时最短】
+class Solution:
+    def reverseList(self, head: ListNode) -> ListNode:
+        prev = None
+        while head:
+            head.next, prev,head =prev, head, head.next
+        return prev
