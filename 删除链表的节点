@@ -1,0 +1,28 @@
+【这道题错了四次，让我康康都栽了哪些坑】
+【错误1：next啊next！调用next字节时候要检查节点是否为空！所以要格外注意节点跑到尾部时候的情况，tmp.next已经无意义了，它的val当然也么得意义】
+【主要还是没考虑到当链表长度为1时删除头节点的情况】
+class Solution:
+    def deleteNode(self, head: ListNode, val: int) -> ListNode:
+        tmp = head
+        while tmp:
+            if tmp.val == val:
+                tmp.val = tmp.next.val
+                tmp.next = tmp.next.next
+            else:
+                tmp = tmp.next
+        return head
+   
+【错误2，噢没有错误2，这几次错误居然都是因为没有考虑到next的情况，一个坑栽好几次，不愧是我】
+
+【answer】【一定一定要考虑只有一个节点的情况！！】
+class Solution:
+    def deleteNode(self, head: ListNode, val: int) -> ListNode:
+        tmp = head   #也可以初始化一个值为0的节点，节点.next=head
+        if head.val == val:   #高亮！！！必须考虑到删除头节点的情况！尤其是当链表长度为1时候，如果没有这个if，就会出错！
+            return head.next
+        while tmp:
+            if tmp.next.val == val:
+                tmp.next = tmp.next.next
+                return head
+            tmp = tmp.next
+        return head
