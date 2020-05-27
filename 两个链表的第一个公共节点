@@ -1,4 +1,4 @@
-【注意！链表的公共节点指的是该节点存的内存地址相同，而不是节点的val相同】
+【注意！链表的公共节点指的是该节点存的内存地址相同（即节点的引用相同），而不是节点的val相同】
 【这道题是看了题解才写出来的，所以复习时候别看答案自己做一遍！】
 
 【错误1：弱智错误，不能retune Null，应该return None】
@@ -57,7 +57,14 @@ class Solution:
         return tmp1
         
         
-       
+【还有answer2的简洁写法！】
+class Solution:
+    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode:
+        tmp1, tmp2 = headA, headB
+        while tmp1 != tmp2:
+            tmp1 = tmp1.next if tmp1 else headB
+            tmp2 = tmp2.next if tmp2 else headA
+        return tmp1
 
 
 
