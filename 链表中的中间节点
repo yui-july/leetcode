@@ -1,0 +1,34 @@
+【弱智方法，计算链表长度】
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+class Solution:
+    def middleNode(self, head: ListNode) -> ListNode:
+        tmp = []
+        while head :
+            tmp.append(head)
+            head = head.next
+        return tmp[len(tmp)//2]
+        
+【如果首先考虑链表只有一个节点的情况，耗时会缩短，但还是需要多一个数组的空间】
+class Solution:
+    def middleNode(self, head: ListNode) -> ListNode:
+        if head.next == None:
+            return head
+        tmp = []
+        while head :
+            tmp.append(head)
+            head = head.next
+        return tmp[len(tmp)//2]
+
+【最优】【利用快慢指针，快指针每次走两步，慢指针一步，当快指针为尾节点（节点数量为奇数）或者为None（节点数为偶数）时，慢指针指向中间】
+class Solution:
+    def middleNode(self, head: ListNode) -> ListNode:
+        curr = fast = head
+        while fast and fast.next:
+            curr = curr.next
+            fast = fast.next.next
+        return curr
