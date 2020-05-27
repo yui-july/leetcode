@@ -1,0 +1,53 @@
+【利用快慢指针】
+【错误1：while陷入死循环。我居然一开始还怪人家prev，后来又觉得是return没有跳出函数...你可再仔细瞅瞅到底是谁的锅，啊？】
+class Solution:
+    def hasCycle(self, head: ListNode) -> bool:
+        prev = ListNode(0)
+        prev.next = head
+        while head.next:                            
+            prev = head                             #这里啊割割！！！prev = head ， head = head.next.next，累死它俩也不会相等啊！！！
+            head = head.next.next
+            if prev == head:
+                return True
+        return False
+        
+【把prev = head改成prev = prev.next还是不对，为什么呢？因为如果head.next为最后一个节点，那么head = head.next.next执行完，head=None
+  然后再去判定while head.next，就会出现经典错误“没有属性next”。】
+【而我，刚刚还以为，在while循环里，head=None时，也可以判定head.next然后结束循环，详情请看“移除重复节点”那道题】
+【所以还是老生常谈，在！调！用！next！字！段！之！前！，始！终！检！查！节！点！是！否！为！空！】
+【在循环里把head也给我加上！！！while head and head.next！！！】
+
+【错误2】【别问，问就是粗心，slow head一起走，谁不相等谁是狗？】
+class Solution:
+    def hasCycle(self, head: ListNode) -> bool:
+        slow = head
+        while head and head.next:
+            slow = slow.next
+            head = head.next
+            if slow is head:
+                return True
+        return False
+
+
+【answer1，就是上面答案的正确版啦】
+class Solution:
+    def hasCycle(self, head: ListNode) -> bool:
+        prev = ListNode(0)
+        prev.next = head
+        while head and head.next：                            
+            prev = prev.next                      
+            head = head.next.next
+            if prev == head:                    #这里也可以用if prev is head
+                return True
+        return False
+
+【answer2：不用虚假头节点】【其实这道题也没有用虚假头节点的必要啦，但是我之前因为别的bug就以为不能用虚假头节点真是错怪它了！】
+class Solution:
+    def hasCycle(self, head: ListNode) -> bool:
+        slow = head
+        while head and head.next:
+            slow = slow.next
+            head = head.next.next
+            if slow is head:
+                return True
+        return False
