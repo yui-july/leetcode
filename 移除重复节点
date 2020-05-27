@@ -12,10 +12,10 @@ class Solution:
         a.add(head.val)                          #第2个错误点（排序按照自己的思考情况，这个解法的主要错误就是它）：当链表为空，就没有属性val
         while cur.next:
             if cur.next.val in a:
-                cur.next = cur.next.next         #第1个错误点：当cur.next为尾节点时，进行完这一步，cur为None，不存在cur.next【不对不对这个不是错误】
-            else:                                #楼上这个不是错误，对while判定来说，不存在cur.next就直接跳出循环了
-                a.add(cur.next.val)              #所以本题从头到尾都只有一个错误！！那就是没有考虑链表为空的情况！！
-                cur = cur.next                   #所以不要初始化完a就急吼吼的把head.val加入a啊！！
+                cur.next = cur.next.next         #当cur.next为尾节点时，进行完这一步，cur不是None！cur.next才是None！所以这里判定while cur.next根本没问题！
+            else:                                #对while判定来说，不存在cur.next也是会出现错误的！！！
+                a.add(cur.next.val)              #本题表面上看只有没考虑链表是否为空这一个错误！！实际上还有我自己以为的错误不是错误但其实是我以为错误了！草！我在套娃！
+                cur = cur.next                   #所以不要初始化完a就急吼吼的把head.val加入a啊！！【这句呐喊还是保留！还有就是千万多画画！不要想当然！】
         return head
 【补充：1.单指针，无虚假链表头：如果while判定cur.next的话，必须先判定head是否为空；如果while判定cur的话，等一下，while不能判定cur！！
           如果while cur：，则无法移除重复节点，因为重复节点会是cur本点！（所以如果想while cur：的话，必须得是双指针）
