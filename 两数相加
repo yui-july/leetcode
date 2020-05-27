@@ -1,0 +1,25 @@
+【这道题和链表求和是同一道喔！】
+【但是刚做完链表求和的我马上做这个又错了一次喔！】
+【刚想说还是错在没有属性val，仔细一看发现是没有属性next，啊这样啊那没事了】
+【没事才怪！好了来分析下哪里的节点都None了结果我又给它.next了】
+class Solution:
+    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
+        head = ListNode(0)
+        tmp = head
+        sum = 0
+        while l1 or l2:
+            if l1 is None:
+                tmp.next = l1                      #hello？？？就这？？？能不能细心一点！！tmp本来就是None，l1也None，你还让tmp.next=l1！！
+                l1 = ListNode(0)                   #累了，长点记性吧，answer不复制了，回头复习时候请把这道题老老实实再做一遍，谢谢
+            if l2 is None:
+                tmp.next = l1
+                l2.next = ListNode(0)
+            sum += l1.val + l2.val
+            tmp.next = ListNode(sum % 10)
+            sum = sum // 10
+            tmp = tmp.next
+            l1 = l1.next
+            l2 = l2.next
+        if sum:
+            tmp.next = ListNode(sum)
+        return head.next
