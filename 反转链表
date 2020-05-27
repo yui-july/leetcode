@@ -16,7 +16,6 @@ class Solution:
             curr = a
         return pre
 
-
 【简洁代码，耗时最短】
 class Solution:
     def reverseList(self, head: ListNode) -> ListNode:
