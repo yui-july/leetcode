@@ -1,0 +1,73 @@
+【忽然想起来如果这些数位是正向存放的话，我还没想出来解法】
+【加入下次一定清单】
+【这道题标了数学相关，就是需要先思考用数学知识怎么解决啦，反正我就完全没想到需要考虑进位和取模这种操作】
+【遇到数位相关（重音）的题当然要考虑进位和取模！！！独立思考的时候大脑是空白的吗？】
+
+【错误1：调用next字段之前，没检查节点是否为空】【啊这句话这么书面我都记熟了，别问问就是在这儿错太多次了草，我是猪】【等等等等这次还不太一样】
+【这里出错的点是node.next=None，此时node.next为空节点，没有属性val】
+【那么应该怎么做呢？快想，想不到了再往下看】
+【康康answer里的注释！！！如果一开始就理清楚是返回新链表题目，根本就不会有（啊为什么不可以node.next.val而一定要建新节点呢）这种愚蠢问题！！！】
+class Solution:
+    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
+        head = ListNode(0)
+        node = head
+        sum = 0
+        while l1 or l2:
+            if l1 is None:
+                node.next = l2
+                l1 = ListNode(0)
+            if l2 is None:
+                node.next = l1
+                l2 = ListNode(0)
+            sum += l1.val + l2.val
+            node.next.val = sum % 10    #就是这里！
+            sum = sum // 10
+            node = node.next
+            l1 = l1.next
+            l2 = l2.next
+        return head.next
+        
+【错误2：还是没有考虑到只有一个节点的链表】
+【当测试用例为[5][5]时，该错误输出为[0]，丢失了最高位】
+class Solution:
+    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
+        head = ListNode(0)
+        node = head
+        sum = 0
+        while l1 or l2:
+            if l1 is None:
+                node.next = l2
+                l1 = ListNode(0)
+            if l2 is None:
+                node.next = l1
+                l2 = ListNode(0)
+            sum += l1.val + l2.val
+            node.next =ListNode(sum % 10)
+            sum = sum // 10
+            node = node.next
+            l1 = l1.next
+            l2 = l2.next         
+        return head.next        #结束最链表的遍历之后还需要对sum进行判断，警惕丢失最高位的情况！
+        
+【answer】
+class Solution:
+    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
+        head = ListNode(0)
+        node = head
+        sum = 0
+        while l1 or l2:
+            if l1 is None:
+                node.next = l2
+                l1 = ListNode(0)
+            if l2 is None:
+                node.next = l1
+                l2 = ListNode(0)
+            sum += l1.val + l2.val
+            node.next =ListNode(sum % 10)   #不可以node.next.val = sum%10，应该写成node.next = ListNode（sum%10）
+            sum = sum // 10                 #写着写着才发现这道题是属于建了一个新链表，最后返回这个新链表！node.next一直为None！
+            node = node.next                #每次计算出除以10的余数，再加上进位，得到值，然后新建一个val为该值的节点，接入新链表head的尾部
+            l1 = l1.next                    #恍然大醒悟！！总结果然超有必要！！！
+            l2 = l2.next
+        if sum:
+            node.next = ListNode(sum)
+        return head.next
