@@ -1,0 +1,26 @@
+【错误原因：只对比了当前节点和后一个节点，应该对比当前节点和之后的节点直到找到值不同的那个】
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+class Solution:
+    def deleteDuplicates(self, head: ListNode) -> ListNode:
+        tmp = head
+        while head and head.next:
+            if head.val == head.next.val:
+                head.next = head.next.next
+                head = head.next         #没错 就是这一句错啦
+            else:head = head.next
+        return tmp
+        
+【answer】
+class Solution:
+    def deleteDuplicates(self, head: ListNode) -> ListNode:
+        tmp = head
+        while head and head.next:
+            if head.val == head.next.val:
+                head.next = head.next.next
+            else:head = head.next
+        return tmp
