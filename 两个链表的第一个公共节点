@@ -1,0 +1,63 @@
+【注意！链表的公共节点指的是该节点存的内存地址相同，而不是节点的val相同】
+【这道题是看了题解才写出来的，所以复习时候别看答案自己做一遍！】
+
+【错误1：弱智错误，不能retune Null，应该return None】
+class Solution:
+    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode:
+        a = set()
+        while headA:
+            a.add(headA)
+            headA = headA.next
+        l = len(a)
+        while headB:
+            a.add(headB)
+            if len(a) == l:
+                return headB
+            else:
+                l += 1
+            headB = headB.next
+        return Null                        #这里，应该return None
+        
+【错误2：其实还有错误，比如说看了题解以为自己懂了懂了然后再去写的我，忘记循环时候把l+1，还有别的奇奇怪怪的错误忘记了，毕竟连测试用例都过不了就没提交】
+【所以一定要自己再思考一遍再做一遍哇！！！】
+
+
+【answer1：就是上面那个错误修改一下，不贴了】
+【answer2：最优解！！！就现在，别往下看了，如果刚刚做的那遍跟answer1解答一样，现在去给我思考最优解！！！】
+
+【当时看了最优解用的方法的我，还有一个错误答案】 
+【错误3：会陷入死循环喔】
+class Solution:
+    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode:
+        tmp1, tmp2 = headA, headB
+        while tmp1 != tmp2:
+            tmp1 = tmp1.next
+            tmp2 = tmp2.next
+            if tmp1 is None:
+                tmp1 = headB
+            if tmp2 is None:
+                tmp2 = headA
+        return tmp1
+
+
+
+【answer2：为什么这个答案不会死循环呢，因为tmp1和tmp2最后都走到了None，它们相等辣！】
+class Solution:
+    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode:
+        tmp1, tmp2 = headA, headB
+        while tmp1 != tmp2:
+            if tmp1:
+                tmp1 = tmp1.next
+            else:
+                tmp1 = headB
+            if tmp2:   
+                tmp2 = tmp2.next
+            else:
+                tmp2 = headA
+        return tmp1
+        
+        
+       
+
+
+
