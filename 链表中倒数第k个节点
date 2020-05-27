@@ -1,0 +1,11 @@
+【这个没啥诶，就是快慢指针，唯一需要注意的是看清返回值，是返回节点还是节点的值】
+【对了，做这种倒数题的时候要注意一点，写在下面对应的代码处好了】
+【answer】
+class Solution:
+    def getKthFromEnd(self, head: ListNode, k: int) -> ListNode:
+        curr = fast = head
+        for i in range(k):         
+            fast = fast.next
+        while fast:                     #做倒数题的时候要注意是要找到节点还是删除节点，不同的情况有不同的while判定，具体的不写了，复习时候自己再思考下喔
+            curr, fast = curr.next, fast.next
+        return curr
