@@ -1,10 +1,25 @@
-【自己写的，不够简洁】
-# Definition for singly-linked list.
-# class ListNode:
-#     def __init__(self, x):
-#         self.val = x
-#         self.next = None
+【错误：之前一直没搞懂为什么不能设虚假链表头ListNode（0），刚刚我忽然悟了】
+【如果设prev = ListNode（0），则反转后的链表：首先多了个值为0的尾节点，其次尾节点没有.next，没有.next的尾节点根本不能叫做尾节点！】
+【意识到这点之后我还在寻思，那怎么能让head.next指向prev之后，再给prev一个指向None的.next呢】
+【然后我就忽然明白为什么不能prev = ListNode（0），而是要prev = None了！！直接建空节点啊割割！！！】
+【写到这里我又忽然想到，先prev=ListNode（），然后不要prev.next=head，应该也是可以的，我去试试看】
+【试完回来了，不行，prev = ListNode（）的话，好像默认prev.val为0，运行是成功了，但是果然链表尾部多了个值】
+【所以！空节点的初始化为！prev = None！】
+class Solution:
+    def reverseList(self, head: ListNode) -> ListNode:
+        prev = ListNode(0)
+        prev.next = head
+        while head:
+            a = head.next
+            head.next = prev
+            prev = head
+            head = a
+        return prev
 
+
+
+
+【自己写的，不够简洁】
 class Solution:
     def reverseList(self, head: ListNode) -> ListNode:
         curr = head
