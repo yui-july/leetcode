@@ -1,0 +1,40 @@
+【错误1：很明显，就有人不考虑头节点】
+class Solution:
+    def removeElements(self, head: ListNode, val: int) -> ListNode:
+        tmp = head
+        while tmp and tmp.next:
+            if tmp.next.val == val:
+                tmp.next = tmp.next.next
+            else:tmp = tmp.next
+        return head
+        
+ 【错误2：厉害了我自己又看了一遍都没发现哪儿有问题，还是跟答案对比了一下才看出来。】
+ 【当慢指针下一个位置是快指针的位置的时候！要！先！移！慢！指！针！！】
+ class Solution:
+    def removeElements(self, head: ListNode, val: int) -> ListNode:
+        tmp = ListNode(0)
+        tmp.next = head
+        pre = tmp
+        while head:
+            if head.val == val:
+                pre.next = head.next
+                head = head.next
+            else:
+                head = head.next     #就是这里啊割割！把head先移走的话，如果要移除的节点连续，那么第一个节点不会被移除，如果不连续，那么每个都不会移除
+                pre = head
+        return tmp.next
+        
+【answer】
+class Solution:
+    def removeElements(self, head: ListNode, val: int) -> ListNode:
+        tmp = ListNode(0)
+        tmp.next = head
+        pre = tmp
+        while head:
+            if head.val == val:
+                pre.next = head.next
+                head = head.next
+            else:
+                pre = head
+                head = head.next
+        return tmp.next
