@@ -1,0 +1,37 @@
+【啊这道题真的很难而且还要多定义一个函数总之琢磨了好久半写半抄了个正确答案】
+【确实是属于应该常看常思考的题】
+【但是整理的时候完全不想多看一眼呢，下次一定.jpg】
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+class Solution:
+    def reverse(self, head: ListNode, tail: ListNode) ->ListNode:
+        pre = tail.next
+        tmp = head
+        while pre != tail:
+            a = tmp.next
+            tmp.next = pre
+            pre = tmp
+            tmp = a
+        return tail, head
+
+        
+    def reverseKGroup(self, head: ListNode, k: int) -> ListNode:
+        prev = ListNode(0)
+        prev.next = head
+        tmp = prev
+        while head:
+            tail = tmp
+            for i in range(k):
+                tail = tail.next
+                if tail is None:
+                    return prev.next
+            nex = tail.next
+            head, tail = self.reverse(head, tail)
+            tmp.next = head
+            tail.next = nex
+            tmp = tail
+            head = tmp.next
+        return prev.next
