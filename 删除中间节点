@@ -1,0 +1,9 @@
+【把下一个节点的值赋给当前节点，然后删除下一节点】【我怎么妹想到呢！！】
+class Solution:
+    def deleteNode(self, node):
+        """
+        :type node: ListNode
+        :rtype: void Do not return anything, modify node in-place instead.
+        """
+        node.val = node.next.val
+        node.next = node.next.next
