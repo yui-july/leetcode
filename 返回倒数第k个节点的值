@@ -1,0 +1,9 @@
+【注意这里返回的是节点值val喔】
+class Solution:
+    def kthToLast(self, head: ListNode, k: int) -> int:
+        curr = fast = head
+        for i in range(k):
+            fast = fast.next
+        while fast:
+            curr, fast = curr.next, fast.next
+        return curr.val
