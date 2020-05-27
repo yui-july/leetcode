@@ -1,0 +1,35 @@
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+初始化值为1的空节点prev
+class Solution:
+    def swapPairs(self, head: ListNode) -> ListNode:
+        prev = ListNode(-1)
+        prev.next = head
+        tmp = prev
+        while tmp.next and tmp.next.next:
+            a = tmp.next
+            b = tmp.next.next
+            tmp.next = b
+            a.next = b.next
+            b.next = a
+            tmp = tmp.next.next
+        return prev.next
+        
+初始化一个无值的空节点prev，tmp
+【耗时最短解法】
+class Solution:
+    def swapPairs(self, head: ListNode) -> ListNode:
+        prev = tmp = ListNode()
+        prev.next = head
+        while prev.next and prev.next.next:
+            a = prev.next
+            b = prev.next.next
+            prev.next = b
+            a.next = b.next
+            b.next = a
+            prev = prev.next.next
+        return tmp.next
