@@ -1,0 +1,167 @@
+【这道题也需要先进行数学思考喔】
+【听到没快去给我思考啦，思考完再往下看！】
+
+【自己的思路】
+【利用快慢指针，fast每次走2步，slow每次都1步；
+  首先判断快指针和快指针的next是否为None，None的话就return，说明没环或者没到链表尾部，不None的话继续走，走到slow和fast相等，说明有环；
+  然后开始找入环第一个节点的位置，通过自己写写画画得知，相遇时slow走了几步，说明入环节点在倒数第几个位置
+  k为步数，fast走了2k步，slow走了k步，它俩相遇，说明环长为k；又因为环尾肯定是链表尾部，所以环头就是倒数第k个节点
+  然后又回到寻找倒数第k个节点的问题啦】
+【整理一下即，k为步数，相遇时fast=2k步，slow=k步，则slow走的步数为环长，即k为环长，倒数第k个节点即为入环点。】  
+  
+【看清要返回的是节点，所以我们不需要找到倒数第k+1个节点】    
+【补充，当链表无环时，返回Null也就是返回None啦，可以直接只return，不要写return Null这种杂交语句0】
+【tips！反向思考：在写if和while语句的时候，如果感觉不顺畅或者容易出bug，可以把里面的判定条件反过来，再接着编写】
+
+【错误1：没有考虑到入环点为head的情况；最后一个while里，应该先判断是否相等再往下移，如果先移再判断，就会把入环点判断成head.next节点】
+【错误1在写法上还有一个错误！看看能不能看得出来，看不出来就去看错误2！】
+class Solution:
+    def detectCycle(self, head: ListNode) -> ListNode:        
+        a = 0
+        slow = fast = head
+        while fast and fast.next:
+            if slow != fast:
+                slow = slow.next    
+                fast = fast.next.next
+                a += 1
+            tmp = head
+            for i in range(a):
+                tmp = tmp.next
+            while head:                     #就是这里
+                head = head.next
+                tmp = tmp.next
+                if head == tmp:
+                    return head
+        return Null
+        
+        
+【错误2：把错误1的错误改掉了，还是出错，为什么呢，因为！往下看！】
+class Solution:
+    def detectCycle(self, head: ListNode) -> ListNode:        
+        a = 0
+        slow = fast = head
+        while fast and fast.next:
+            if slow != fast:                  #这里！初始slow=fast=head，所以这里不能先判断它俩是否相等，因为它俩一定是相等的！
+                slow = slow.next              #应该先移动，再判断，如果相等就再进行接下来的操作。注意嵌套关系和缩进！
+                fast = fast.next.next
+                a += 1
+            tmp = head
+            for i in range(a):
+                tmp = tmp.next
+            while head:
+                if head == tmp:
+                    return head
+                head = head.next
+                tmp = tmp.next
+        return Null
+        
+        
+【answer1：一开始以为不能写while fast and fast.next，刚刚整理的时候感觉可以，试了下发现真的可以！就把自己修改好的答案放在这里】
+class Solution:
+    def detectCycle(self, head: ListNode) -> ListNode:        
+        a = 0
+        slow = fast = head
+        while fast and fast.next:
+            slow = slow.next    
+            fast = fast.next.next
+            a += 1
+            if slow == fast:
+                tmp = head
+                for i in range(a):
+                    tmp = tmp.next
+                while head:                      #一定一定要注意这里的缩进，这里的while还是嵌套在if slow==fast下的！！
+                    if head == tmp:              #刚刚编码的时候把while和if齐头并进了，会发现根本没有tmp指针
+                        return head              #就算把tmp=head写到最前面，逻辑也是错的，while是建立在if成立的基础上进行的
+                    head = head.next             #如果while和if齐头并进，while就等于了if的else情况，即slow！=fast时才会进行的循环
+                    tmp = tmp.next               #写answer2的时候忽然发现，我就说while head这句其实有点牵强，有不牵强的简洁写法呀！！写在下面！
+        return
+   
+【answer1.1：最后一个while循环的正常且简洁的写法】
+class Solution:
+    def detectCycle(self, head: ListNode) -> ListNode:        
+        a = 0
+        slow = fast = head
+        while fast and fast.next:
+            slow = slow.next    
+            fast = fast.next.next
+            a += 1
+            if slow == fast:
+                tmp = head
+                for i in range(a):
+                    tmp = tmp.next
+                while head!= tmp:              #就是这里啦！所以在写if和while语句的时候，如果感觉不顺畅或者容易出bug，可以把里面的判定条件反过来，再接着编写
+                    head = head.next
+                    tmp = tmp.next
+                return head
+        return
+
+        
+【answer2：别人家的写法，不需要记走的步数】
+【别人家的数学分析就是正经分析，才不是写写画画得来的qwq】
+【算法流程：
+  1.双指针第一次相遇： 设两指针 fast，slow 指向链表头部 head，fast 每轮走 2 步，slow 每轮走 1 步；
+  第一种结果： fast 指针走过链表末端，说明链表无环，直接返回 null；
+  第二种结果： 当fast == slow时， 两指针在环中第一次相遇 。下面分析此时fast 与 slow走过的步数关系 ：
+   设链表共有 a+b 个节点，其中链表头部到链表入口有a个节点（不计链表入口节点），链表环有b个节点；设两指针分别走了f，s步，则有：
+   fast 走的步数是slow步数的2倍，即f= 2s；（解析：fast 每轮走2步）
+   fast 比 slow多走了n个环的长度，即 f = s + nb；（ 解析：双指针都走过a步，然后在环内绕圈直到重合，重合时 fast 比 slow 多走环的长度整数倍）；
+   以上两式相减得：f = 2nb，s = nb，即fast和slow指针分别走了 2n，n个环的周长（注意：n是未知数）。
+  2.目前情况分析：
+  如果让指针从链表头部一直向前走并统计步数k，那么所有走到链表入口节点时的步数是：k=a+nb（先走a步到入口节点之后每绕1 圈环（b步）都会再次到入口节点）。
+  而目前，slow 指针走过的步数为nb步。因此，我们只要想办法让 slow 再走a步停下来，就可以到环的入口。
+  但是我们不知道a的值，该怎么办？依然是使用双指针法。我们构建一个指针，此指针需要有以下性质：此指针和slow一起向前走a步后，两者在入口节点重合。那么从哪里走到入口节点需要a步？答案是链表头部head。
+  3.双指针第二次相遇：
+  slow指针位置不变 ，将fast指针重新指向链表头部节点 ；slow和fast同时每轮向前走1步；
+  TIPS：此时 f = 0，s = nb；
+  当 fast 指针走到f = a步时，slow 指针走到步s = a+nb，此时 两指针重合，并同时指向链表环入口 。
+  4.返回slow指针指向的节点。】
+【我和他的思维比较：
+  我只得出了slow走的步数是环长的结果，于是还得利用a来记录步数，然后再初始化tmp指针，把head挪到倒数第k个节点上，
+  其实slow走的步数是环长，就是环长啊！！就是a啊！我初始化tmp再辛辛苦苦把tmp挪到索引a的位置上！这个位置就是slow的位置啊！！直接一起挪head和slow不就把head挪过去了！！
+  他思路里还有挪fast，其实直接挪head就好了啦！反正我们要找入环点，又不是找到之后还需要返回链表头！
+  好的，在这个解答下面再编码下我终于反应过来的思路】   ←啊原来不用挪fast，挪head这个思路我当时就反应过来了喔  
+
+class Solution:
+    def detectCycle(self, head: ListNode) -> ListNode:        
+        slow = fast = head
+        while True:                                       #对了还要注意这里的循环条件，以及break的用法
+            if not (fast and fast.next):return
+            fast, slow = fast.next.next, slow.next
+            if fast == slow: break
+        fast = head
+        while fast != slow:
+            fast, slow = fast.next, slow.next
+        return fast
+
+【正常的、应该去掉a的解法】  
+【跑了一下好像耗时挺长的，是因为有双循环吗】
+class Solution:
+    def detectCycle(self, head: ListNode) -> ListNode:        
+        slow = fast = head
+        while fast and fast.next:
+            slow = slow.next
+            fast = fast.next.next
+            if slow == fast:
+                while slow != head:
+                    slow = slow.next
+                    head = head.next
+                return head
+        return
+        
+【最初的while条件变成了while True试了一下，好像速度也没啥提高，谁能想到answer1和answer2耗时一样且都是最短呢，我怀疑力扣这个耗时判断其实不太精准】
+【等一下，我才发现当时意识到可以不用a之后，我就直接挪了head没挪fast，之前得到的answer2的耗时就是我以下这个写法的耗时，我去用大佬的挪fast大法再去跑一次康康】
+【好耶耗时并没有缩短，不管耗时了反正这道题主要看思路！】
+class Solution:
+    def detectCycle(self, head: ListNode) -> ListNode:        
+        slow = fast = head
+        while True:
+            if not (fast and fast.next):
+                return
+            slow = slow.next
+            fast = fast.next.next
+            if slow == fast:
+                break
+        while slow != head:
+            slow = slow.next
+            head = head.next
+        return head
