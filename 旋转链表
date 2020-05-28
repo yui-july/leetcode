@@ -1,0 +1,207 @@
+【这道题有一点点数学相关，因为k可以无穷大，但是情况就那么些个情况，所以为了优化着想，先get链表长度，然后用k对其取模】←个屁为了优化着想！是必须要取模！！
+【还有一大点数学相关！旋转后新的链表头就是倒数第k取模个值！就又变成了类似于“删除链表的倒数第 n 个节的点”的问题，需要找到倒数第k+1个节点，这个节点就是新的尾节点】
+【不对，倒不如说，这道题必须要先取模，不然k超出链表长度的话，就会没有属性next；而如果先连接成环的话，就会死循环！】
+【听到了吗！必须要！先！取模！】
+【好了接下来，注意这道题与“删除链表的倒数第 n 个节的点”的不同。在删除节点时，k是可以等于链表长度的，所以如果tail从head开始往下走的话，tail很容易为None，其.next就没用意义】
+【而这道题我们取了模，k永远小于链表长度，tail就可以从head开始往下进行next】
+
+
+【错误1：好耶，又是'NoneType' object has no attribute 'next'。所以要先取模啦！】
+class Solution:
+    def rotateRight(self, head: ListNode, k: int) -> ListNode:
+        tmp = tail = head
+        for i in range(k):                           #就是这里
+            tail = tail.next
+        while tail.next:
+            tmp, tail = tmp.next, tail.next
+        tail.next = head
+        a = tmp.next
+        tmp.next = None
+        return a
+        
+        
+【错误2：为什么取了模还是错了呢，错因还是没有属性next】
+【因为k%0会出错，我就让a从1开始，这倒是没什么问题喔，问题就在于，如果链表为空，即a=0，那么head.next就没有意义】
+class Solution:
+    def rotateRight(self, head: ListNode, k: int) -> ListNode:
+        tail = tmp = fast = head
+        a = 1
+        while tail.next:                  #就是这里，错在这儿啦
+            tail = tail.next
+            a += 1
+        for i in range(k % a):
+            fast = fast.next
+            if fast != tail:
+                tmp = tmp.next
+        tail.next = head
+        head = tmp.next
+        tmp.next = None
+        return head
+        
+        
+【错误3：已经考虑了取模和k%0的问题，接下来补充了链表为空和链表只有1个节点（复习的时候注意考虑为什么链表只有1个节点也算特殊情况（提示：自环））的情况】
+【但是还是错了，是解答出错，】
+【诶，我本来还在思考怎么说自己错在哪儿了，忽然想到，如果我们已经先排除了head为空的情况，那么a好像不用从1开始？因为这里就错在没有考虑k=0的情况】←我又回来了，天真！这里根本不是存在没有考虑k=0！！！
+【但是如果a从0开始的话，就需要构建虚假链表头】
+【试了一下好像可行，先把这个错误写完再去试一下，如果正确的话就写在answer里】
+class Solution:
+    def rotateRight(self, head: ListNode, k: int) -> ListNode:
+        if not (head and head.next):                      #考虑a=0的特殊情况，如果head或者head.next不存在，直接返回head
+            return head
+        tail = tmp = fast = head                          #这里应该先考虑k=0的特殊情况，诶等等接着往下看
+        a = 1
+        while tail.next:
+            tail = tail.next
+            a += 1
+        for i in range(k % a):
+            fast = fast.next
+            if fast != tail:                              #是这里出错了啦！！！可以不用考虑k=0的！错在for和if是并列关系！不是if嵌套在for里！
+                tmp = tmp.next
+        tail.next = head
+        head = tmp.next
+        tmp.next = None                                   
+        return head
+        
+        
+【错误4：就是刚刚恍然大明白的问题，if的缩进错了】
+class Solution:
+    def rotateRight(self, head: ListNode, k: int) -> ListNode:
+        if not (head and head.next):
+            return head
+        if k == 0:
+            return head
+        tail = tmp = fast = head
+        a = 1
+        while tail.next:
+            tail = tail.next
+            a += 1
+        for i in range(k % a):
+            fast = fast.next
+            if fast != tail:                                    #如果缩进没错，可以不考虑k=0的情况
+                tmp = tmp.next
+        tail.next = head
+        head = tmp.next
+        tmp.next = None
+        return head
+        
+        
+【错误5：缩进还是没有改，找倒数第k+1节点那块完全写错，但是为什么报错是没有属性next呢，复习时候再思考一下？】
+【不用复习时候了，刚刚又忽然想明白了，a=0、tail=head开始的话，遍历完tail为None，tail.next无意义】
+class Solution:
+    def rotateRight(self, head: ListNode, k: int) -> ListNode:
+        if not head:
+            return head
+        tail = tmp = fast = head
+        a = 0            #最开始设置a=1， 当输入[1,2] 2时输出[2,1]，错误     
+        while tail:
+            tail = tail.next
+            a += 1
+        k = k % a        #在这里先判断一下k的模是否为0
+        if k == 0:
+            return head
+        for i in range(k):       #找倒数第k+1个节点       ← 看看这人，当时还注释得有模有样
+            fast = fast.next
+            if fast != tail:
+                tmp = tmp.next
+        tail.next = head                    #←就是这里，tail.next无意义，所以如果想a=0开始的话，就得有个虚假链表头，不然a会比链表长度小1
+        head = tmp.next                     #既然如此那干脆a就从1开始吧，反正得首先排除a=0的情况
+        tmp.next = None                     #↑我又来时空穿越进行补充了，可以不用虚假链表头，具体解答见answer1
+        return head
+        
+        
+【错误6：缩————进————】
+class Solution:
+    def rotateRight(self, head: ListNode, k: int) -> ListNode:
+        if not head:
+            return head
+        tail = tmp = fast = head
+        a = 0            #最开始设置a=1， 当输入[1,2] 2时输出[2,1]，错误；但是a=0时候，最后链接尾节点和头结点的tail.next=head就会出错
+        while tail:      #↑鹅鹅鹅鹅现在看看我当时一本正经分析的样子真的好好笑，而且直到现在都还没意识到是if的缩进出了问题呢，我
+            tail = tail.next
+            a += 1
+        k = k % a      
+        if k == 0:
+            return head
+        for i in range(k):       
+            fast = fast.next
+            if fast.next != tail:
+                tmp = tmp.next
+                fast = fast.next            #啧啧啧还像模像样改了这里，可是又有什么用呢
+        fast.next = head
+        head = tmp.next
+        tmp.next = None
+        return head
+        
+        
+【answer1：当时的解答】
+class Solution:
+    def rotateRight(self, head: ListNode, k: int) -> ListNode:
+        if not head:
+            return head
+        tail = tmp = fast = head
+        a = 0            #最开始设置a=1， 当输入[1,2] 2时输出[2,1]，错误；但是a=0时候，最后链接尾节点和头结点的tail.next=head就会出错
+        while tail:      #↑所以就只把tail当工具人，tail只用来得到链表长度，后续找倒数第k+1个节点时候的fast才是真正的尾节点
+            tail = tail.next
+            a += 1
+        k = k % a         #时空穿越的我表示现在看这一步真的很多余喔   ←再次穿越的我表示！不！多！余！！因为这个解法最开始我们只排除了head为空的情况
+        if k == 0:        #没有排除head只有1个节点的情况！！！如果head只有一个节点，......
+            return head   #说着说着我去试了一下，发现head只有一个节点的话，会先形成自环然后head.next=None，完全是行得通的啊！！所以这一步真的很多余！！！
+        for i in range(k):   
+            fast = fast.next
+        while fast.next:              #这里，fast变成了真正的尾节点
+            tmp = tmp.next
+            fast = fast.next
+        fast.next = head
+        head = tmp.next
+        tmp.next = None
+        return head
+        
+        
+【answer2：好了我要根据自己刚刚的理解再去做一遍不需要判定k=0的情况，如果对了这里就是answer2，错了的话，我们错误7见，嘻嘻】
+【草！真的有错误！但是是一个小错误所以就不写在错误7里了直接注释写一下！】
+class Solution:
+    def rotateRight(self, head: ListNode, k: int) -> ListNode:
+        if not (head and head.next):       #这里！判定head.next是否为None！多余！
+            return head
+        tail = tmp = head
+        a = 1
+        while tail.next:
+            tail = tail.next
+            a += 1
+        tail.next = head                     #只用了俩指针，tail不是只用来得到链表长度的工具人，所以要首先把tail.next连到head上成环噢
+        for i in range(k%a):
+            tmp = tmp.next
+        while tmp != tail:                   #就是这里！！！！错误是我把这句写成了if tmp != tail！if就只判定1次啊割割！！！要while循环才可以啊！！
+            tmp = tmp.next                   #还有就是，因为只用了俩指针，顺序必须是先连接成环tail.next = head，再循环while tmp != tail
+            head = head.next                 #不能写成while tmp.next，会死循环。如果想写成while tmp.next，就要循环完之后才能tail.next = head
+        tmp = head.next                      #但是这时候head已经跟着tmp跑啦，所以如果想先循环再连接成环，就需要仨指针
+        head.next = None
+        return tmp
+
+【整理过后的跳过所有坑和多余步骤的answer：】
+【所以这道题在知道进行取模之后，从头到尾都只需要考虑链表为空的情况，什么k%a等不等于0啊根本不需要考虑！多余！】
+class Solution:
+    def rotateRight(self, head: ListNode, k: int) -> ListNode:
+        if not head:
+            return head
+        tail = tmp = head
+        a = 1
+        while tail.next:
+            tail = tail.next
+            a += 1
+        tail.next = head
+        for i in range(k%a):
+            tmp = tmp.next
+        while tmp != tail:
+            tmp = tmp.next
+            head = head.next
+        tmp = head.next
+        head.next = None
+        return tmp
+        
+【整理下思路】
+1.首先进行数学思考，取模
+2.考虑到a=0的情况（因为取模要k%a嘛，这个需要自然而然想到）
+3.a从1开始计数（因为a=0已经写过了啊！这个也需要自然而然想到啊！）
+4.开始解答
+好了我的数学素养太差了
